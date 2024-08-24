@@ -1,0 +1,208 @@
+import { PencilSquareIcon } from "@heroicons/react/24/solid";
+import { Button, Label, Modal, Textarea, TextInput } from "flowbite-react";
+import React from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { ProductData, ProductFromData } from "../types";
+import { SecondaryButton } from "./Buttons";
+
+type Props = {
+  openModal: boolean;
+  setOpenModal: (openModal: boolean) => void;
+  product: ProductData;
+};
+
+const EditModal: React.FC<Props> = ({
+  openModal,
+  setOpenModal,
+  product,
+}: Props): JSX.Element => {
+  // const [email, setEmail] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ProductFromData>({
+    defaultValues: {
+      title: `${product.title}`,
+      description: `${product.description}`,
+      brand: `${product.brand}`,
+      price: `${product.price.toString()}`,
+      stock: `${product.stock}`,
+      tags: `${product.tags.join(", ")}`,
+    },
+  });
+
+  const onSubmit: SubmitHandler<ProductFromData> = (data) => {
+    console.log(data);
+    const tagsArray = data.tags.split(",").map((tag) => tag.trim());
+    const price = Number(data.price);
+    const stock = Number(data.stock);
+
+    const productData = {
+      ...data,
+      price: price,
+      stock: stock,
+      tags: tagsArray,
+    };
+
+    console.log("API DATA " + productData.title);
+
+    setOpenModal(false);
+    reset();
+  };
+  return (
+    <Modal show={openModal} size="md" onClose={() => setOpenModal(false)} popup>
+      <Modal.Header className="relative bg-secondary" />
+
+      <Modal.Body className=" bg-background p-10 text-gray-300">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="text-center">
+            <PencilSquareIcon className="mx-auto mb-4 size-14 " />
+            <h3 className="mb-8 text-lg font-normal ">Edit Product</h3>
+            <div className="my-3 flex flex-col items-start">
+              <div className="mb-2 block ">
+                <Label htmlFor="title" value="Title" className="text-text" />
+              </div>
+
+              <TextInput
+                id="title"
+                className="w-full"
+                placeholder="Title"
+                type="text"
+                {...register("title", { required: true, maxLength: 100 })}
+              />
+              {errors.title && (
+                <span className="mt-2 text-red-500">
+                  {errors.title.type === "required" &&
+                    "This field is required."}
+                  {errors.title.type === "maxLength" &&
+                    "Max length is 100 characters."}
+                </span>
+              )}
+            </div>
+            <div className="my-3 flex flex-col items-start">
+              <div className="mb-2 block ">
+                <Label
+                  htmlFor="description"
+                  value="Description"
+                  className="text-text"
+                />
+              </div>
+
+              <Textarea
+                id="description"
+                className="w-full"
+                placeholder="Description"
+                rows={4}
+                {...register("description", {
+                  required: true,
+                  maxLength: 2000,
+                })}
+              />
+              {errors.description && (
+                <span className="mt-2 text-red-500">
+                  {errors.description.type === "required" &&
+                    "This field is required."}
+                  {errors.description.type === "maxLength" &&
+                    "Max length is 2000 characters."}
+                </span>
+              )}
+            </div>
+            <div className="my-3 flex flex-col items-start">
+              <div className="mb-2 block ">
+                <Label htmlFor="brand" value="brand" className="text-text" />
+              </div>
+
+              <TextInput
+                id="brand"
+                className="w-full"
+                placeholder="Brand"
+                type="text"
+                {...register("brand", { required: true })}
+              />
+              {errors.brand && (
+                <span className="mt-2 text-red-500">
+                  This Field is required
+                </span>
+              )}
+            </div>
+            <div className="my-3 flex flex-col items-start">
+              <div className="mb-2 block ">
+                <Label htmlFor="price" value="Price" className="text-text" />
+              </div>
+
+              <TextInput
+                id="price"
+                className="w-full"
+                placeholder="Price"
+                type="number"
+                {...register("price", { required: true })}
+              />
+              {errors.price && (
+                <span className="mt-2 text-red-500">
+                  This Field is required
+                </span>
+              )}
+            </div>
+            <div className="my-3 flex flex-col items-start">
+              <div className="mb-2 block ">
+                <Label htmlFor="stock" value="Stock" className="text-text" />
+              </div>
+
+              <TextInput
+                id="stock"
+                className="w-full"
+                placeholder="Stock"
+                type="text"
+                {...register("stock", { required: true })}
+              />
+              {errors.stock && (
+                <span className="mt-2 text-red-500">
+                  This Field is required
+                </span>
+              )}
+            </div>
+            <div className="my-3 flex flex-col items-start">
+              <div className="mb-2 block ">
+                <Label htmlFor="tags" value="Tags" className="text-text" />
+              </div>
+
+              <TextInput
+                id="tags"
+                className="w-full"
+                placeholder="Tags"
+                type="text"
+                helperText="Comma-Separated"
+                {...register("tags", { required: true })}
+              />
+              {errors.tags && (
+                <span className="mt-2 text-red-500">
+                  This Field is required
+                </span>
+              )}
+            </div>
+
+            <div className="mt-5 flex justify-center gap-4">
+              <Button
+                autoFocus={false}
+                type="submit"
+                className="w-full bg-primary text-secondary transition-all duration-75 hover:text-white"
+                color=""
+              >
+                Save
+              </Button>
+              <SecondaryButton
+                label="No, cancel"
+                onClick={() => setOpenModal(false)}
+              />
+            </div>
+          </div>
+        </form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+export default EditModal;

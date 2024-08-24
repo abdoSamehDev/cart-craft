@@ -4,11 +4,14 @@ import Logo from "../assets/logo.png";
 import { AdminData } from "../types";
 import { isAuthenticated } from "../store/localStore";
 import { MainButton } from "../components/Buttons";
+import { useLocation } from "react-router-dom";
 
 type Props = { adminData?: AdminData };
 
 const Header: React.FC<Props> = ({ adminData }: Props): JSX.Element => {
-  const isAdmin: boolean = isAuthenticated();
+  // const isAdmin: boolean = isAuthenticated();
+  const isAdmin: boolean = true;
+  const location = useLocation();
 
   return (
     <Navbar fluid className="bg-secondary shadow-lg">
@@ -18,8 +21,16 @@ const Header: React.FC<Props> = ({ adminData }: Props): JSX.Element => {
         </Navbar.Brand>
 
         {isAdmin ? (
-          <div className="flex md:order-2">
+          <div className="flex gap-5">
             {/* <Navbar.Toggle /> */}
+            {location.pathname === "/admin-dashboard" && (
+              <MainButton
+                label="Add a Product"
+                // onClick={
+                //    //TODO: SIGN IN FUNCTION
+                //  }
+              />
+            )}
             <Dropdown
               arrowIcon={false}
               inline

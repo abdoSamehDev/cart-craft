@@ -33,9 +33,9 @@ function App() {
           <Route
             path="/admin-dashboard"
             element={
-              <PrivateRouter>
-                <AdminDashboardPage />
-              </PrivateRouter>
+              // <PrivateRouter>
+              <AdminDashboardPage />
+              // </PrivateRouter>
             }
           />
         </Route>
