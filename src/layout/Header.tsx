@@ -1,10 +1,11 @@
 import { Avatar, Dropdown, Navbar } from "flowbite-react";
-import React from "react";
+import React, { useState } from "react";
 import Logo from "../assets/logo.png";
 import { AdminData } from "../types";
 import { isAuthenticated } from "../store/localStore";
 import { MainButton } from "../components/Buttons";
 import { useLocation } from "react-router-dom";
+import AddModal from "../components/AddModal";
 
 type Props = { adminData?: AdminData };
 
@@ -12,6 +13,12 @@ const Header: React.FC<Props> = ({ adminData }: Props): JSX.Element => {
   // const isAdmin: boolean = isAuthenticated();
   const isAdmin: boolean = true;
   const location = useLocation();
+
+  const [addModal, setAddModal] = useState<boolean>(false);
+
+  const handleAddClick = () => {
+    setAddModal(true); // Open the add modal
+  };
 
   return (
     <Navbar fluid className="bg-secondary shadow-lg">
@@ -26,9 +33,9 @@ const Header: React.FC<Props> = ({ adminData }: Props): JSX.Element => {
             {location.pathname === "/admin-dashboard" && (
               <MainButton
                 label="Add a Product"
-                // onClick={
-                //    //TODO: SIGN IN FUNCTION
-                //  }
+                onClick={() => {
+                  handleAddClick();
+                }}
               />
             )}
             <Dropdown
@@ -81,6 +88,8 @@ const Header: React.FC<Props> = ({ adminData }: Props): JSX.Element => {
           </>
         )}
       </div>
+      {/* Edit Modal */}
+      {addModal && <AddModal openModal={addModal} setOpenModal={setAddModal} />}
     </Navbar>
   );
 };

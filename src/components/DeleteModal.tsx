@@ -28,7 +28,7 @@ const DeleteModal: React.FC<Props> = ({
           <div className="flex justify-center gap-4">
             <Button
               color="failure"
-              className="w-full"
+              className="w-full items-center"
               onClick={() => {
                 setOpenModal(false);
                 //TODO: DELETE PRODUCT FUNCTION
@@ -37,7 +37,7 @@ const DeleteModal: React.FC<Props> = ({
               Yes, I'm sure
             </Button>
             <SecondaryButton
-              label="No, cancel"
+              label="Cancel"
               onClick={() => setOpenModal(false)}
             />
             {/* <Button onClick={() => setOpenModal(false)}>No, cancel</Button> */}

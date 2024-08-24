@@ -1,36 +1,25 @@
-import { PencilSquareIcon } from "@heroicons/react/24/solid";
-import { Button, Label, Modal, Textarea, TextInput } from "flowbite-react";
 import React from "react";
+import { ProductFromData } from "../types";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ProductData, ProductFromData } from "../types";
+import { Button, Label, Modal, Textarea, TextInput } from "flowbite-react";
+import { PlusCircleIcon } from "@heroicons/react/24/solid";
 import { SecondaryButton } from "./Buttons";
 
 type Props = {
   openModal: boolean;
   setOpenModal: (openModal: boolean) => void;
-  product: ProductData;
 };
 
-const EditModal: React.FC<Props> = ({
+const AddModal: React.FC<Props> = ({
   openModal,
   setOpenModal,
-  product,
 }: Props): JSX.Element => {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ProductFromData>({
-    defaultValues: {
-      title: `${product.title}`,
-      description: `${product.description}`,
-      brand: `${product.brand}`,
-      price: `${product.price.toString()}`,
-      stock: `${product.stock}`,
-      tags: `${product.tags.join(", ")}`,
-    },
-  });
+  } = useForm<ProductFromData>({});
 
   const onSubmit: SubmitHandler<ProductFromData> = (data) => {
     console.log(data);
@@ -46,6 +35,11 @@ const EditModal: React.FC<Props> = ({
     };
 
     console.log("API DATA " + productData.title);
+    console.log("API DATA " + productData.description);
+    console.log("API DATA " + productData.brand);
+    console.log("API DATA " + productData.price);
+    console.log("API DATA " + productData.stock);
+    console.log("API DATA " + productData.tags);
 
     setOpenModal(false);
     reset();
@@ -57,8 +51,8 @@ const EditModal: React.FC<Props> = ({
       <Modal.Body className=" bg-background p-10 text-gray-300">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="text-center">
-            <PencilSquareIcon className="mx-auto mb-4 size-14 " />
-            <h3 className="mb-8 text-lg font-normal ">Edit Product</h3>
+            <PlusCircleIcon className="mx-auto mb-4 size-14 " />
+            <h3 className="mb-8 text-lg font-normal ">Add New Product</h3>
             <div className="my-3 flex flex-col items-start">
               <div className="mb-2 block ">
                 <Label htmlFor="title" value="Title" className="text-text" />
@@ -130,6 +124,7 @@ const EditModal: React.FC<Props> = ({
               <div className="mb-2 block ">
                 <Label htmlFor="price" value="Price" className="text-text" />
               </div>
+
               <div className="relative w-full">
                 <TextInput
                   id="price"
@@ -195,7 +190,7 @@ const EditModal: React.FC<Props> = ({
                 className="w-full items-center bg-primary text-secondary transition-all duration-75 hover:text-white"
                 color=""
               >
-                Save
+                Add
               </Button>
               <SecondaryButton
                 label="Cancel"
@@ -209,4 +204,4 @@ const EditModal: React.FC<Props> = ({
   );
 };
 
-export default EditModal;
+export default AddModal;

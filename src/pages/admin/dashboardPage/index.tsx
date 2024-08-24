@@ -15,7 +15,7 @@ const AdminDashboardPage: React.FC<Props> = (props: Props): JSX.Element => {
   const naviget = useNavigate();
   const [deleteModal, setDelModal] = useState<boolean>(false);
   const [editModal, setEditModal] = useState<boolean>(false);
-  const [selectedProduct, setSelectedProduct] = useState<ProductData>(null); // Track the selected product
+  const [selectedProduct, setSelectedProduct] = useState<ProductData>(); // Track the selected product
 
   const handleEditClick = (product: ProductData) => {
     setSelectedProduct(product); // Set the selected product
