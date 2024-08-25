@@ -40,7 +40,7 @@ const AdminDashboardPage: React.FC = (): JSX.Element => {
       }, 3000);
       return () => clearTimeout(timer);
     }
-    fetchAllProducts(200);
+    fetchAllProducts(200, 0);
   }, [fetchAllProducts, showEditMessage, showDeleteMessage]);
 
   const handleEditClick = (product: ProductData) => {

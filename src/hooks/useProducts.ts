@@ -121,7 +121,7 @@ export const useProducts = (): UseProductsReturnType => {
   }, []);
 
   const createProduct = useCallback(
-    async (newProduct: ProductData) => {
+    async (newProduct: Partial<ProductData>) => {
       setLoading(true);
       setError(null);
       try {
