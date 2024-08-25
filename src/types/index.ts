@@ -64,3 +64,22 @@ export type ProductFromData = {
   stock: string;
   tags: string;
 };
+
+export type UseProductsReturnType = {
+  products: ProductData[] | null;
+  product: ProductData | null;
+  loading: boolean;
+  error: string | null;
+  fetchAllProducts: (limit?: number, skip?: number) => Promise<void>;
+  fetchProductById: (id: number) => Promise<void>;
+  searchProducts: (query: string) => Promise<void>;
+  fetchProductsByCategory: (category: string) => Promise<void>;
+  sortProducts: (sortBy: string, order: "asc" | "desc") => Promise<void>;
+  fetchCategories: () => Promise<string[]>;
+  createProduct: (newProduct: ProductData) => Promise<void>;
+  updateProduct: (
+    id: number,
+    updatedProduct: Partial<ProductData>,
+  ) => Promise<void>;
+  deleteProduct: (id: number) => Promise<void>;
+};
