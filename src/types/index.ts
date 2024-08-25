@@ -76,7 +76,7 @@ export type UseProductsReturnType = {
   fetchProductsByCategory: (category: string) => Promise<void>;
   sortProducts: (sortBy: string, order: "asc" | "desc") => Promise<void>;
   fetchCategories: () => Promise<string[]>;
-  createProduct: (newProduct: ProductData) => Promise<void>;
+  createProduct: (newProduct: Partial<ProductData>) => Promise<void>;
   updateProduct: (
     id: number,
     updatedProduct: Partial<ProductData>,

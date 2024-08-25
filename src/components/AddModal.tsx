@@ -1,5 +1,5 @@
 import React from "react";
-import { ProductFromData } from "../types";
+import { ProductData, ProductFromData } from "../types";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, Label, Modal, Textarea, TextInput } from "flowbite-react";
 import { PlusCircleIcon } from "@heroicons/react/24/solid";
@@ -8,11 +8,13 @@ import { SecondaryButton } from "./Buttons";
 type Props = {
   openModal: boolean;
   setOpenModal: (openModal: boolean) => void;
+  createFunction: (product: Partial<ProductData>) => Promise<void>;
 };
 
 const AddModal: React.FC<Props> = ({
   openModal,
   setOpenModal,
+  createFunction,
 }: Props): JSX.Element => {
   const {
     register,
@@ -21,7 +23,7 @@ const AddModal: React.FC<Props> = ({
     formState: { errors },
   } = useForm<ProductFromData>({});
 
-  const onSubmit: SubmitHandler<ProductFromData> = (data) => {
+  const onSubmit: SubmitHandler<ProductFromData> = async (data) => {
     console.log(data);
     const tagsArray = data.tags.split(",").map((tag) => tag.trim());
     const price = Number(data.price);
@@ -35,11 +37,8 @@ const AddModal: React.FC<Props> = ({
     };
 
     console.log("API DATA " + productData.title);
-    console.log("API DATA " + productData.description);
-    console.log("API DATA " + productData.brand);
-    console.log("API DATA " + productData.price);
-    console.log("API DATA " + productData.stock);
-    console.log("API DATA " + productData.tags);
+
+    await createFunction(productData);
 
     setOpenModal(false);
     reset();

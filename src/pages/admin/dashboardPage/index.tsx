@@ -75,8 +75,6 @@ const AdminDashboardPage: React.FC = (): JSX.Element => {
     <>
       {showEditMessage && InfoAlert("Product edited successfully.")}
       {showDeleteMessage && InfoAlert("Product deleted successfully.")}
-      {/* {InfoAlert("Product deleted successfully")} */}
-      {/* {InfoAlert("Product edited successfully")} */}
       <div className="mx-auto my-10 flex min-h-screen w-5/6 items-center justify-center ">
         <List unstyled className="w-full divide-y divide-accent ">
           {products.map((product, index) => (
