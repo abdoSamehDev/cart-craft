@@ -9,12 +9,14 @@ type Props = {
   openModal: boolean;
   setOpenModal: (openModal: boolean) => void;
   product: ProductData;
+  editFunction: (product: Partial<ProductData>) => Promise<void>;
 };
 
 const EditModal: React.FC<Props> = ({
   openModal,
   setOpenModal,
   product,
+  editFunction,
 }: Props): JSX.Element => {
   const {
     register,
@@ -32,7 +34,7 @@ const EditModal: React.FC<Props> = ({
     },
   });
 
-  const onSubmit: SubmitHandler<ProductFromData> = (data) => {
+  const onSubmit: SubmitHandler<ProductFromData> = async (data) => {
     console.log(data);
     const tagsArray = data.tags.split(",").map((tag) => tag.trim());
     const price = Number(data.price);
@@ -47,6 +49,7 @@ const EditModal: React.FC<Props> = ({
 
     console.log("API DATA " + productData.title);
 
+    await editFunction(productData);
     setOpenModal(false);
     reset();
   };

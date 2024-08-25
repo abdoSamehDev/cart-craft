@@ -66,7 +66,7 @@ export type ProductFromData = {
 };
 
 export type UseProductsReturnType = {
-  products: ProductData[] | null;
+  products: ProductData[];
   product: ProductData | null;
   loading: boolean;
   error: string | null;

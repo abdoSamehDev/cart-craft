@@ -3,17 +3,20 @@ import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { Button, Modal } from "flowbite-react";
 import React from "react";
 import { SecondaryButton } from "./Buttons";
+import { ProductData } from "../types";
 
 type Props = {
   openModal: boolean;
   setOpenModal: (openModal: boolean) => void;
   productId: number;
+  delFunction: (productId: number) => Promise<void>;
 };
 
 const DeleteModal: React.FC<Props> = ({
   openModal,
   setOpenModal,
   productId,
+  delFunction,
 }: Props): JSX.Element => {
   return (
     <Modal show={openModal} size="md" onClose={() => setOpenModal(false)} popup>
@@ -29,9 +32,10 @@ const DeleteModal: React.FC<Props> = ({
             <Button
               color="failure"
               className="w-full items-center"
-              onClick={() => {
+              onClick={async () => {
                 setOpenModal(false);
                 //TODO: DELETE PRODUCT FUNCTION
+                await delFunction(productId);
               }}
             >
               Yes, I'm sure
