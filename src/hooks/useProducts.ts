@@ -132,6 +132,7 @@ export const useProducts = (): UseProductsReturnType => {
         setTotal(response.data.total);
         setSkip(response.data.skip);
         setLimit(response.data.limit);
+
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
           setError(err.message || "An error occurred");
@@ -145,12 +146,19 @@ export const useProducts = (): UseProductsReturnType => {
     [],
   );
 
+
   const fetchCategories = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await productsApi.get("/categories");
-      return response.data.categories;
+      console.log("API Response:", response.data); 
+      if (response.data && Array.isArray(response.data)) {
+        return response.data;
+      } else {
+        console.warn("Unexpected response structure:", response.data);
+        return [];
+      }
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(err.message || "An error occurred");
