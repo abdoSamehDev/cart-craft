@@ -56,6 +56,13 @@ export type ProductData = {
   images: string[];
 };
 
+export type ProductsApiResponse = {
+  products: ProductData[];
+  total: number;
+  skip: number;
+  limit: number;
+};
+
 export type ProductFromData = {
   title: string;
   description: string;
@@ -70,6 +77,9 @@ export type UseProductsReturnType = {
   product: ProductData | null;
   loading: boolean;
   error: string | null;
+  total: number | null;
+  skip: number;
+  limit: number;
   fetchAllProducts: (limit?: number, skip?: number) => Promise<void>;
   fetchProductById: (id: number) => Promise<void>;
   searchProducts: (query: string) => Promise<void>;

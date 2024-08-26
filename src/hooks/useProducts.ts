@@ -8,14 +8,22 @@ export const useProducts = (): UseProductsReturnType => {
   const [product, setProduct] = useState<ProductData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [total, setTotal] = useState<number | null>(null);
+  const [skip, setSkip] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(30);
 
   const fetchAllProducts = useCallback(
-    async (limit: number = 30, skip: number = 0) => {
+    async (productsLimit: number = limit, productsSkip: number = skip) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await productsApi.get(`?limit=${limit}&skip=${skip}`);
+        const response = await productsApi.get(
+          `?limit=${productsLimit}&skip=${productsSkip}`,
+        );
         setProducts(response.data.products);
+        setTotal(response.data.total);
+        setSkip(response.data.skip);
+        setLimit(response.data.limit);
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
           setError(err.message || "An error occurred");
@@ -189,6 +197,9 @@ export const useProducts = (): UseProductsReturnType => {
     product,
     loading,
     error,
+    total,
+    skip,
+    limit,
     fetchAllProducts,
     fetchProductById,
     searchProducts,

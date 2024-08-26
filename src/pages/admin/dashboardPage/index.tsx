@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, List } from "flowbite-react";
+import { Avatar, List, Pagination } from "flowbite-react";
 import { IconButton } from "../../../components/Buttons";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,8 @@ const AdminDashboardPage: React.FC = (): JSX.Element => {
     products,
     loading,
     error,
+    total,
+    searchProducts,
     updateProduct,
     deleteProduct,
     fetchAllProducts,
@@ -26,6 +28,15 @@ const AdminDashboardPage: React.FC = (): JSX.Element => {
   );
   const [showEditMessage, setShowEditMessage] = useState(false);
   const [showDeleteMessage, setShowDeleteMessage] = useState(false);
+  const totalPages: number = Math.ceil(total ? total / 30 : 0);
+  const limit = 30;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const onPageChange = (page: number) => {
+    setCurrentPage(page);
+
+    fetchAllProducts(limit, (page - 1) * limit);
+  };
 
   useEffect(() => {
     if (showEditMessage) {
@@ -40,7 +51,7 @@ const AdminDashboardPage: React.FC = (): JSX.Element => {
       }, 3000);
       return () => clearTimeout(timer);
     }
-    fetchAllProducts(200, 0);
+    fetchAllProducts();
   }, [fetchAllProducts, showEditMessage, showDeleteMessage]);
 
   const handleEditClick = (product: ProductData) => {
@@ -131,6 +142,7 @@ const AdminDashboardPage: React.FC = (): JSX.Element => {
             </List.Item>
           ))}
         </List>
+
         {/* Edit Modal */}
         {editModal && selectedProduct && (
           <EditModal
@@ -150,6 +162,13 @@ const AdminDashboardPage: React.FC = (): JSX.Element => {
             delFunction={handleDelete}
           />
         )}
+      </div>
+      <div className="mb-8 flex justify-center overflow-x-auto">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
       </div>
     </>
   );

@@ -26,7 +26,7 @@ const DeleteModal: React.FC<Props> = ({
         <div className="text-center">
           <ExclamationCircleIcon className="mx-auto mb-4 size-14 " />
           <h3 className="mb-5 text-lg font-normal ">
-            Are you sure you want to delete this product (ID: {productId})?
+            Are you sure you want to delete this product?
           </h3>
           <div className="flex justify-center gap-4">
             <Button
