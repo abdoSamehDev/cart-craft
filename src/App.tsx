@@ -7,6 +7,9 @@ import AdminDashboardPage from "./pages/admin/dashboardPage";
 import AdminLoginPage from "./pages/admin/loginPage";
 import CheckoutPage from "./pages/user/checkoutPage";
 import CartPage from "./pages/user/cartPage";
+import fetchProductById from "./pages/user/productDetailsPage/mocks";
+
+
 
 function App() {
   return (
@@ -14,7 +17,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
-          <Route path="/product/:id" element={<ProductDetailsPage />} />
+          <Route
+            path="/product/:id"
+            element={<ProductDetailsPage fetchProductById={fetchProductById} />}
+          />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
