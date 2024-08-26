@@ -2,7 +2,7 @@ import { Avatar, Dropdown, Navbar } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import Logo from "../assets/logo.png";
 import { AdminData, ProductData } from "../types";
-import { isAuthenticated } from "../store/localStore";
+import { isAuthenticated, removeUserToken } from "../store/localStore";
 import { MainButton } from "../components/Buttons";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddModal from "../components/AddModal";
@@ -42,7 +42,7 @@ const Header: React.FC<Props> = ({ adminData }: Props): JSX.Element => {
 
   return (
     <>
-      <Navbar fluid className="bg-secondary shadow-lg">
+      <Navbar fluid className="z-50 bg-secondary shadow-lg">
         <div className="mx-auto flex w-5/6 items-center justify-between">
           <Navbar.Brand href="/">
             <img src={Logo} className="mr-3 h-6 sm:h-9" alt="Logo" />
@@ -83,9 +83,10 @@ const Header: React.FC<Props> = ({ adminData }: Props): JSX.Element => {
                   </Dropdown.Item>
                   <Dropdown.Divider />
                   <Dropdown.Item
-                  // onClick={
-                  //   // TODO: SIGNOUT FUNCTION
-                  // }
+                    onClick={() => {
+                      removeUserToken();
+                      navigate("/");
+                    }}
                   >
                     Sign out
                   </Dropdown.Item>

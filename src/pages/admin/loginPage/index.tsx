@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Card, Checkbox, Label, TextInput } from "flowbite-react";
 import { useFetch } from "../../../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
+import { loadUserToken, saveUserToken } from "../../../store/localStore";
 
 const AdminLoginPage: React.FC = (): JSX.Element => {
   const [username, setUsername] = useState("");
@@ -20,7 +21,7 @@ const AdminLoginPage: React.FC = (): JSX.Element => {
 
   // Check for token in localStorage on mount
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const token = loadUserToken();
     if (token) {
       // If token exists, redirect to admin-dashboard
       navigate("/admin-dashboard");
@@ -49,7 +50,7 @@ const AdminLoginPage: React.FC = (): JSX.Element => {
   useEffect(() => {
     if (loginState.data && loginState.data.token) {
       // Store token in localStorage for persistent login
-      localStorage.setItem("authToken", loginState.data.token);
+      saveUserToken(loginState.data.token);
 
       // Store username if remember me is checked
       if (rememberMe) {
