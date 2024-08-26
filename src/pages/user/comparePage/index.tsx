@@ -6,16 +6,27 @@ import { useProducts } from '../../../hooks/useProducts';
 import { Dropdown, Button, Card, Spinner } from 'flowbite-react';
 import { FaArrowLeft, FaCheckCircle } from 'react-icons/fa';
 
+
 const ProductCompare = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const selectedProductFromDetail = location.state?.selectedProduct || null;
 
-  const { products, categories, loading, error, fetchAllProducts, fetchProductsByCategory, fetchCategories } = useProducts();
-  const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(selectedProductFromDetail);
+  const {
+    products,
+    categories,
+    loading,
+    error,
+    fetchAllProducts,
+    fetchProductsByCategory,
+    fetchCategories,
+  } = useProducts();
+  const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(
+    selectedProductFromDetail,
+  );
   const [selectedProducts, setSelectedProducts] = useState<ProductData[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [allCategory, setAllCategory] = useState<Category[]>([]);
 
   useEffect(() => {
@@ -27,6 +38,7 @@ const ProductCompare = () => {
   }, [fetchCategories]);
 
   useEffect(() => {
+
     const skip = 0;
     const limit = 10;
     if (selectedCategory === '') {
@@ -72,17 +84,23 @@ const ProductCompare = () => {
           </label>
           <select
             id="compareSelect"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
-            value={selectedProduct ? selectedProduct.id.toString() : ''}
+            className="w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+            value={selectedProduct ? selectedProduct.id.toString() : ""}
             onChange={(e) => {
               const productId = parseInt(e.target.value);
               const product = products.find((prod) => prod.id === productId);
               setSelectedProduct(product || null);
             }}
           >
-            <option value="" className='text-black'>Select a product</option>
+            <option value="" className="text-black">
+              Select a product
+            </option>
             {products.map((product) => (
-              <option key={product.id} value={product.id} className='text-black'>
+              <option
+                key={product.id}
+                value={product.id}
+                className="text-black"
+              >
                 {product.title}
               </option>
             ))}
@@ -107,13 +125,6 @@ const ProductCompare = () => {
           ))}
         </Dropdown>
       </div>
-
-
-
-
-
-
-
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6 ">
         {selectedProduct && !selectedProducts.find((p) => p.id === selectedProduct.id) && (

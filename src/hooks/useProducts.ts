@@ -86,34 +86,27 @@ export const useProducts = (): UseProductsReturnType => {
     [],
   );
 
-  const fetchProductsByCategory = useCallback(
-    async (
-      category: string,
-      productsLimit: number = limit,
-      productsSkip: number = skip,
-    ) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await productsApi.get(
-          `/category/${category}&limit=${productsLimit}&skip=${productsSkip}`,
-        );
-        setProducts(response.data.products);
-        setTotal(response.data.total);
-        setSkip(response.data.skip);
-        setLimit(response.data.limit);
-      } catch (err: unknown) {
-        if (err instanceof AxiosError) {
-          setError(err.message || "An error occurred");
-        } else {
-          setError("An unexpected error occurred");
-        }
-      } finally {
-        setLoading(false);
+  const fetchProductsByCategory = useCallback(async (category: string) => {
+    setLoading(true);
+    setError(null);
+    console.log("Loading categories");
+
+    try {
+      const response = await productsApi.get(`/category/${category}`);
+      setProducts(response.data.products);
+      setTotal(response.data.total);
+      setSkip(response.data.skip);
+      setLimit(response.data.limit);
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(err.message || "An error occurred");
+      } else {
+        setError("An unexpected error occurred");
       }
-    },
-    [],
-  );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const sortProducts = useCallback(
     async (
@@ -132,7 +125,6 @@ export const useProducts = (): UseProductsReturnType => {
         setTotal(response.data.total);
         setSkip(response.data.skip);
         setLimit(response.data.limit);
-
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
           setError(err.message || "An error occurred");
@@ -146,19 +138,12 @@ export const useProducts = (): UseProductsReturnType => {
     [],
   );
 
-
   const fetchCategories = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await productsApi.get("/categories");
-      console.log("API Response:", response.data); 
-      if (response.data && Array.isArray(response.data)) {
-        return response.data;
-      } else {
-        console.warn("Unexpected response structure:", response.data);
-        return [];
-      }
+      const response = await productsApi.get("/category-list");
+      return response.data;
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(err.message || "An error occurred");

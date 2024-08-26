@@ -30,7 +30,6 @@ type ProductMeta = {
   barcode: string;
   qrCode: string;
 };
-
 export type ProductData = {
   id: number;
   title: string;
@@ -86,11 +85,7 @@ export type UseProductsReturnType = {
     limit?: number,
     skip?: number,
   ) => Promise<void>;
-  fetchProductsByCategory: (
-    category: string,
-    limit?: number,
-    skip?: number,
-  ) => Promise<void>;
+  fetchProductsByCategory: (category: string) => Promise<void>;
   sortProducts: (
     sortBy: string,
     order: "asc" | "desc",

@@ -1,16 +1,19 @@
 import { Card } from "flowbite-react";
-import { ProductData } from "../types";
+import { ProductData, ProductInCart } from "../types";
 import { MainButton } from "./Buttons";
 import StarRating from "./StarRating";
-import { useCart } from "../hooks/useCart";
 
-type Props = { productData?: ProductData };
+type Props = {
+  productData?: ProductData;
+  addToCart: (product: ProductInCart) => void;
+};
 
 export const MainProductCard: React.FC<Props> = ({
   productData,
+  addToCart,
 }: Props): JSX.Element => {
   const rating = productData ? Math.ceil(productData.rating) : 3;
-  const { addToCart } = useCart();
+
   return (
     <Card
       className="m-3  max-w-sm text-secondary"
@@ -30,7 +33,7 @@ export const MainProductCard: React.FC<Props> = ({
       </a>
       <StarRating rating={rating} />
       <div className="flex items-center justify-between gap-5">
-        <span className="text-3xl font-bold ">
+        <span className="text-2xl font-bold ">
           ${productData ? productData.price : "599"}
         </span>
         <MainButton
