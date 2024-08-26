@@ -22,7 +22,7 @@ const DeleteModal: React.FC<Props> = ({
 
       <Modal.Body className=" bg-background p-10 text-gray-300">
         <div className="text-center">
-          <ExclamationCircleIcon className="mx-auto mb-4 size-14 " />
+          <ExclamationCircleIcon className="mx-auto mb-4 size-14 fill-red-600" />
           <h3 className="mb-5 text-lg font-normal ">
             Are you sure you want to delete this product?
           </h3>

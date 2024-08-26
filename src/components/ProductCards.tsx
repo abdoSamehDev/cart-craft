@@ -31,7 +31,7 @@ export const MainProductCard: React.FC<Props> = ({
         </h5>
       </a>
       <StarRating rating={rating} />
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-5">
         <span className="text-3xl font-bold ">
           ${productData ? productData.price : "599"}
         </span>

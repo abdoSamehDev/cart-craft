@@ -10,6 +10,7 @@ const StarRating: React.FC<RatingProps> = ({ rating }) => {
   for (let i = 0; i < rating; i++) {
     stars.push(
       <svg
+        key={i}
         className="size-5 text-yellow-300"
         fill="currentColor"
         viewBox="0 0 20 20"

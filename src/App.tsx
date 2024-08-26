@@ -14,6 +14,7 @@ import CheckoutPage from "./pages/user/checkoutPage";
 import CartPage from "./pages/user/cartPage";
 import { isAuthenticated } from "./store/localStore";
 import PrivateRouter from "./components/PrivateRouter";
+import NotFoundPathPage from "./pages/NotFoundPathPage";
 
 function App() {
   const isAdmin: boolean = isAuthenticated();
@@ -38,6 +39,7 @@ function App() {
               // </PrivateRouter>
             }
           />
+          <Route path="/*" element={<NotFoundPathPage />} />
         </Route>
       </Routes>
     </Router>

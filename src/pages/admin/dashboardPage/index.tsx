@@ -131,7 +131,7 @@ const AdminDashboardPage: React.FC = (): JSX.Element => {
           <List unstyled className="w-full divide-y divide-accent ">
             {products.map((product, index) => (
               <List.Item key={index} className="w-full p-3 px-5">
-                <div className="flex w-full items-center gap-4 rtl:space-x-reverse">
+                <div className="flex w-full flex-col items-center gap-4 text-center md:flex-row md:text-left">
                   <Avatar
                     img={product.thumbnail}
                     alt="Neil image"

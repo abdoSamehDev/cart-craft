@@ -20,7 +20,7 @@ export const MainButton = ({
     <Button
       size={size}
       isProcessing={loading}
-      className="bg-primary text-secondary transition-all duration-75 hover:text-white"
+      className="w-full items-center bg-primary text-secondary transition-all duration-75 hover:text-white"
       color=""
       onClick={onClick}
     >
@@ -41,7 +41,7 @@ export const SecondaryButton = ({
     <Button
       size={size}
       isProcessing={loading}
-      className="w-full border-2 border-primary bg-transparent text-white transition-all duration-75  hover:border-secondary hover:bg-accent hover:text-secondary"
+      className="w-full items-center border-2 border-primary bg-transparent text-white transition-all duration-75  hover:border-secondary hover:bg-accent hover:text-secondary"
       color=""
       onClick={onClick}
     >

@@ -1,4 +1,8 @@
+import { Cart } from "../types";
+
 const TOKEN_KEY = "userToken";
+
+const CART_KEY = "user_cart";
 
 // Save userToken to localStorage
 export const saveUserToken = (token: string): void => {
@@ -31,4 +35,17 @@ export const removeUserToken = (): void => {
 // Check if the user is authenticated (i.e., token exists)
 export const isAuthenticated = (): boolean => {
   return !!loadUserToken();
+};
+
+export const getCartFromLocalStorage = (): Cart | null => {
+  const storedCart = localStorage.getItem(CART_KEY);
+  return storedCart ? JSON.parse(storedCart) : null;
+};
+
+export const saveCartToLocalStorage = (cart: Cart): void => {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+};
+
+export const removeCartFromLocalStorage = (): void => {
+  localStorage.removeItem(CART_KEY);
 };

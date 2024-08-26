@@ -106,3 +106,41 @@ export type UseProductsReturnType = {
   ) => Promise<void>;
   deleteProduct: (id: number) => Promise<void>;
 };
+
+export type ProductInCart = {
+  id: number;
+  title: string;
+  price: number;
+  quantity: number;
+  total: number;
+  discountPercentage: number;
+  discountedTotal: number;
+  thumbnail: string;
+};
+
+export type Cart = {
+  id?: number;
+  products: ProductInCart[];
+  total: number;
+  discountedTotal: number;
+  userId?: number;
+  totalProducts: number;
+  totalQuantity: number;
+};
+
+export type UseCartsReturnType = {
+  cart: Cart | null;
+  loading: boolean;
+  error: string | null;
+  addToCart: (product: ProductInCart) => void;
+  removeFromCart: (productId: number) => void;
+  updateCart: (
+    cartId: number,
+    products: ProductInCart[],
+    merge?: boolean,
+  ) => Promise<void>;
+  updateCartProductQuyantity: (productId: number, newQuantity: number) => void;
+  deleteCart: (cartId: number) => Promise<void>;
+  checkAndRemoveEmptyCart: () => void;
+  getCart: () => Cart | null;
+};
