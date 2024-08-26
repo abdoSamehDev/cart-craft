@@ -1,74 +1,91 @@
-"use client";
 import { Pagination, Dropdown } from "flowbite-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { MainProductCard } from "../../../components/ProductCards";
-import useFetch from "../../../hooks/useFetch";
-import { ProductData } from "../../../types/index";
+import { useProducts } from "../../../hooks/useProducts";
 import { useSearchParams } from "react-router-dom";
 
 export default function HomePage() {
+  const { 
+    products, 
+    loading, 
+    fetchProductsByCategory, 
+    searchProducts, 
+    totalPosts,
+    sortProducts, 
+    fetchCategories,
+    fetchAllProducts
+  } = useProducts();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState<string>(searchParams.get("q") || "");
-  const [selectedTag, setSelectedTag] = useState<string>("");
+  // const [selectedTag,setselectedTag ] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "">("");
   const [currentPage, setCurrentPage] = useState(1);
-  const onPageChange = (page: number) => setCurrentPage(page);
-  const limit = 10;
+  const [allCategory, setAllCategory] = useState<{ name: string; slug: string }[]>([]);
+  const limit = 30; 
 
-  const [data, loading, totalPosts, allCategory, allTags] = useFetch(
-    `/search`,
-    search,
-    sortOrder,
-    selectedCategory,
-    selectedTag,
-    currentPage,
-    limit
-  );
 
-  const totalPages = Math.ceil(totalPosts / limit);
+  useEffect(() => {
+  
+    const skip = (currentPage - 1) * limit;
+    if (selectedCategory === "") {
+      fetchAllProducts(limit, skip);
+    } else {
+      fetchProductsByCategory(selectedCategory);
+    }
+  }, [currentPage, selectedCategory, fetchAllProducts, fetchProductsByCategory, limit]);
+
+
+  useEffect(() => {
+    const fetchCategoriesData = async () => {
+      const categories = await fetchCategories();
+      setAllCategory(categories);
+    };
+    fetchCategoriesData();
+  }, [fetchCategories]);
 
   useEffect(() => {
     setSearchParams({ q: search });
-  }, [search]);
+    searchProducts(search);
+  }, [search, searchProducts, setSearchParams]);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, [currentPage]);
 
-  const handleTagClick = (tag: string) => {
-    if (selectedCategory) {
-      setSelectedTag(tag);
-    }
-  };
+  const onPageChange = (page: number) => setCurrentPage(page);
+
+
+  // const handleTagClick = (tag: string) => {
+  //   if (selectedCategory) {
+  //     setSelectedTag(tag);
+  //     fetchProductsByCategory(selectedCategory);
+  //   }
+  // };
+
 
   const handleCategoryClick = (category: string) => {
-    if (selectedCategory === "") setSelectedTag("");
     setSelectedCategory(category);
+    // setSelectedTag(""); 
   };
+
 
   const handleSortChange = (order: "asc" | "desc") => {
     setSortOrder(order);
+    sortProducts("price", order);
   };
-
-  
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-primary-100 p-6">
       <div className="w-full max-w-7xl">
-        <div className="flex flex-wrap gap-4 mb-6 p-6 bg-background rounded-lg  top-0 z-50 md:sticky md:top-0  md:flex-row md:gap-6">
+        <div className="flex flex-wrap gap-4 mb-6 p-6 bg-background rounded-lg top-0 z-50 md:sticky md:top-0 md:flex-row md:gap-6">
           <input
             className="border p-3 rounded-md flex-grow text-lg text-black"
             placeholder="Search ..."
             value={search}
             type="text"
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setSearchParams({ q: e.target.value });
-            }}
+            onChange={(e) => setSearch(e.target.value)}
           />
 
-          <Dropdown label="Sort by Price" className="text-lg w-full md:w-auto ">
+          <Dropdown label="Sort by Price" className="text-lg w-full md:w-auto">
             <Dropdown.Item
               className="block w-full md:px-5 py-3 text-gray-700 hover:bg-gray-100 text-left"
               onClick={() => handleSortChange("asc")}
@@ -83,27 +100,33 @@ export default function HomePage() {
             </Dropdown.Item>
           </Dropdown>
 
-          <Dropdown label={selectedCategory || "Category"} className="text-lg w-full md:w-auto">
-            <Dropdown.Item
-              className="block w-full px-5 py-3 text-gray-700 hover:bg-gray-100 text-left"
-              onClick={() => handleCategoryClick("")}
-            >
-              All
-            </Dropdown.Item>
-            {allCategory.map((e, i) => (
-              <Dropdown.Item
-                key={i}
-                className={`block w-full px-5 py-3 text-gray-700 hover:bg-gray-100 text-left ${
-                  selectedCategory === e ? "font-bold" : ""
-                }`}
-                onClick={() => handleCategoryClick(e)}
-              >
-                {e}
-              </Dropdown.Item>
-            ))}
-          </Dropdown>
+     <Dropdown
+  label={selectedCategory || "Category"}
+  className="text-lg w-full md:w-auto text-center "
+>
+  <div className="max-h-64 overflow-y-auto">
+    <Dropdown.Item
+      className="block w-full px-5 py-3 text-gray-700 hover:bg-gray-100 text-left"
+      onClick={() => handleCategoryClick("")} 
+    >
+      All
+    </Dropdown.Item>
+    {allCategory.map((category, i) => (
+      <Dropdown.Item
+        key={i}
+        className={`block w-full px-5 py-3 text-gray-700 hover:bg-gray-100 text-left ${
+          selectedCategory === category.name ? "font-bold" : ""
+        }`}
+        onClick={() => handleCategoryClick(category.name)}
+      >
+        {category.name}
+      </Dropdown.Item>
+    ))}
+  </div>
+</Dropdown>
 
-          {selectedCategory && (
+
+          {/* {selectedCategory && (
             <Dropdown label={selectedTag || "Tag"} className="text-lg w-full md:w-auto">
               <Dropdown.Item
                 className="block w-full px-5 py-3 text-gray-700 hover:bg-gray-100 text-left"
@@ -111,17 +134,15 @@ export default function HomePage() {
               >
                 All
               </Dropdown.Item>
-              {allTags.map((tag, i) => (
-                <Dropdown.Item
-                  key={i}
-                  className="block w-full px-5 py-3 text-gray-700 hover:bg-gray-100 text-left"
-                  onClick={() => handleTagClick(tag)}
-                >
-                  {tag}
-                </Dropdown.Item>
-              ))}
+           
+              <Dropdown.Item
+                className="block w-full px-5 py-3 text-gray-700 hover:bg-gray-100 text-left"
+                onClick={() => handleTagClick("example")}
+              >
+                Example Tag
+              </Dropdown.Item>
             </Dropdown>
-          )}
+          )} */}
         </div>
 
         {search.length > 0 && (
@@ -136,7 +157,7 @@ export default function HomePage() {
               <div className="w-20 h-20 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
             </div>
           ) : (
-            data.map((product: ProductData, i: number) => (
+            products.map((product, i) => (
               <MainProductCard key={i} productData={product} />
             ))
           )}
@@ -144,14 +165,15 @@ export default function HomePage() {
 
         <div className="flex justify-center mt-6 text-gray-600 text-lg">
           <span>
-            Page {currentPage} of {totalPages}
+            Page {currentPage} of {Math.ceil(totalPosts / limit)}
           </span>
         </div>
 
         <div className="flex flex-wrap justify-center overflow-x-auto mt-6 md:sticky md:bottom-0 z-20">
+          
           <Pagination
             currentPage={currentPage}
-            totalPages={totalPages}
+            totalPages={Math.ceil(totalPosts / limit )}
             onPageChange={onPageChange}
             showIcons
             className="mb-9"

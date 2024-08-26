@@ -1,27 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ProductData } from '../../../types';
 import { MainButton } from '../../../components/Buttons';
 import StarRating from '../../../components/StarRating';
+import { useProducts } from '../../../hooks/useProducts';
 
-type ProductPageDetailProps = {
-  fetchProductById: (id: number) => ProductData;
-};
-
-const ProductPageDetail: React.FC<ProductPageDetailProps> = ({ fetchProductById }) => {
+const ProductPageDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<ProductData | null>(null);
+  
+  const { product, fetchProductById, loading, error } = useProducts();
 
   useEffect(() => {
     if (id) {
-      const productData = fetchProductById(Number(id));
-      setProduct(productData);
+      fetchProductById(Number(id));
     }
   }, [id, fetchProductById]);
 
+  if (loading) {
+    return    <div className="col-span-full flex justify-center items-center">
+    <div className="w-20 h-20 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
+  </div>
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   if (!product) {
-    return <div>Loading...</div>;
+    return <div>No product found.</div>;
   }
 
   const discountedPrice = (
@@ -30,7 +36,7 @@ const ProductPageDetail: React.FC<ProductPageDetailProps> = ({ fetchProductById 
 
   return (
     <div className="container mx-auto p-4 bg-[#1A202C] rounded-lg shadow-md">
-      <div className="mb-4">
+      <div className="mb-4 sticky top-6 z-10">
         <button
           onClick={() => navigate('/')}
           className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600"
@@ -48,16 +54,12 @@ const ProductPageDetail: React.FC<ProductPageDetailProps> = ({ fetchProductById 
           />
         </div>
 
-       
-
         <div>
           <h1 className="text-4xl font-extrabold text-white mb-4">{product.title}</h1>
           <p className="text-lg text-gray-300 mb-4">{product.description}</p>
 
-
           <StarRating rating={product.rating} />
 
-         
           <div className="text-3xl font-semibold text-primary mb-4">
             ${discountedPrice}{' '}
             <span className="line-through text-gray-500 text-lg ml-2">
@@ -65,12 +67,10 @@ const ProductPageDetail: React.FC<ProductPageDetailProps> = ({ fetchProductById 
             </span>
           </div>
 
-        
-          <p className={`text-white'-400 font-semibold mb-4`}>
+          <p className={`text-white-400 font-semibold mb-4`}>
             {product.availabilityStatus} ({product.stock} in stock)
           </p>
 
-         
           <div className="text-lg mb-2">
             <p className="mb-2">
               <span className="font-semibold text-white">Brand:</span> 
@@ -82,7 +82,6 @@ const ProductPageDetail: React.FC<ProductPageDetailProps> = ({ fetchProductById 
             </p>
           </div>
 
-        
           <div className="text-lg mb-2">
             <p className="mb-2">
               <span className="font-semibold text-white">Dimensions:</span> 
@@ -94,19 +93,16 @@ const ProductPageDetail: React.FC<ProductPageDetailProps> = ({ fetchProductById 
             </p>
           </div>
 
-         
           <p className="text-lg mb-2">
             <span className="font-semibold text-white">Warranty:</span> 
             <span className="text-gray-300"> {product.warrantyInformation}</span>
           </p>
 
-          
           <p className="text-lg mb-4">
             <span className="font-semibold text-white">Shipping:</span> 
             <span className="text-gray-300"> {product.shippingInformation}</span>
           </p>
 
-         
           <div className="mb-4">
             {product.tags.map((tag, index) => (
               <span
@@ -118,11 +114,19 @@ const ProductPageDetail: React.FC<ProductPageDetailProps> = ({ fetchProductById 
             ))}
           </div>
 
-          
-          <MainButton
-            label="Add to Cart"
-            onClick={() => navigate('/cart')}
-          />
+          <div className="flex space-x-4">
+            <MainButton
+              label="Compare"
+              onClick={() => navigate('/compare', { state: { selectedProduct: product } })}
+              className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600"
+            />
+
+            <MainButton
+              label="Add to Cart"
+              onClick={() => navigate('/cart')}
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600"
+            />
+          </div>
         </div>
       </div>
     </div>
