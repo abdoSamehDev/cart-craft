@@ -1,9 +1,7 @@
-/* eslint-disable tailwindcss/no-custom-classname */
 import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { Button, Modal } from "flowbite-react";
 import React from "react";
 import { SecondaryButton } from "./Buttons";
-import { ProductData } from "../types";
 
 type Props = {
   openModal: boolean;
@@ -34,7 +32,6 @@ const DeleteModal: React.FC<Props> = ({
               className="w-full items-center"
               onClick={async () => {
                 setOpenModal(false);
-                //TODO: DELETE PRODUCT FUNCTION
                 await delFunction(productId);
               }}
             >
@@ -44,7 +41,6 @@ const DeleteModal: React.FC<Props> = ({
               label="Cancel"
               onClick={() => setOpenModal(false)}
             />
-            {/* <Button onClick={() => setOpenModal(false)}>No, cancel</Button> */}
           </div>
         </div>
       </Modal.Body>

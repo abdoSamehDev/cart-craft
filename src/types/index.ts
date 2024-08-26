@@ -82,9 +82,22 @@ export type UseProductsReturnType = {
   limit: number;
   fetchAllProducts: (limit?: number, skip?: number) => Promise<void>;
   fetchProductById: (id: number) => Promise<void>;
-  searchProducts: (query: string) => Promise<void>;
-  fetchProductsByCategory: (category: string) => Promise<void>;
-  sortProducts: (sortBy: string, order: "asc" | "desc") => Promise<void>;
+  searchProducts: (
+    query: string,
+    limit?: number,
+    skip?: number,
+  ) => Promise<void>;
+  fetchProductsByCategory: (
+    category: string,
+    limit?: number,
+    skip?: number,
+  ) => Promise<void>;
+  sortProducts: (
+    sortBy: string,
+    order: "asc" | "desc",
+    limit?: number,
+    skip?: number,
+  ) => Promise<void>;
   fetchCategories: () => Promise<string[]>;
   createProduct: (newProduct: Partial<ProductData>) => Promise<void>;
   updateProduct: (

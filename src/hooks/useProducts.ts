@@ -43,6 +43,9 @@ export const useProducts = (): UseProductsReturnType => {
     try {
       const response = await productsApi.get(`/${id}`);
       setProduct(response.data);
+      setTotal(response.data.total);
+      setSkip(response.data.skip);
+      setLimit(response.data.limit);
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(err.message || "An error occurred");
@@ -54,49 +57,81 @@ export const useProducts = (): UseProductsReturnType => {
     }
   }, []);
 
-  const searchProducts = useCallback(async (query: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await productsApi.get(`/search?q=${query}`);
-      setProducts(response.data.products);
-    } catch (err: unknown) {
-      if (err instanceof AxiosError) {
-        setError(err.message || "An error occurred");
-      } else {
-        setError("An unexpected error occurred");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const fetchProductsByCategory = useCallback(async (category: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await productsApi.get(`/category/${category}`);
-      setProducts(response.data.products);
-    } catch (err: unknown) {
-      if (err instanceof AxiosError) {
-        setError(err.message || "An error occurred");
-      } else {
-        setError("An unexpected error occurred");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const sortProducts = useCallback(
-    async (sortBy: string, order: "asc" | "desc" = "asc") => {
+  const searchProducts = useCallback(
+    async (
+      query: string,
+      productsLimit: number = limit,
+      productsSkip: number = skip,
+    ) => {
       setLoading(true);
       setError(null);
       try {
         const response = await productsApi.get(
-          `?sortBy=${sortBy}&order=${order}`,
+          `/search?q=${query}&limit=${productsLimit}&skip=${productsSkip}`,
         );
         setProducts(response.data.products);
+        setTotal(response.data.total);
+        setSkip(response.data.skip);
+        setLimit(response.data.limit);
+      } catch (err: unknown) {
+        if (err instanceof AxiosError) {
+          setError(err.message || "An error occurred");
+        } else {
+          setError("An unexpected error occurred");
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
+
+  const fetchProductsByCategory = useCallback(
+    async (
+      category: string,
+      productsLimit: number = limit,
+      productsSkip: number = skip,
+    ) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await productsApi.get(
+          `/category/${category}&limit=${productsLimit}&skip=${productsSkip}`,
+        );
+        setProducts(response.data.products);
+        setTotal(response.data.total);
+        setSkip(response.data.skip);
+        setLimit(response.data.limit);
+      } catch (err: unknown) {
+        if (err instanceof AxiosError) {
+          setError(err.message || "An error occurred");
+        } else {
+          setError("An unexpected error occurred");
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
+
+  const sortProducts = useCallback(
+    async (
+      sortBy: string,
+      order: "asc" | "desc" = "asc",
+      productsLimit: number = limit,
+      productsSkip: number = skip,
+    ) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await productsApi.get(
+          `?sortBy=${sortBy}&order=${order}&limit=${productsLimit}&skip=${productsSkip}`,
+        );
+        setProducts(response.data.products);
+        setTotal(response.data.total);
+        setSkip(response.data.skip);
+        setLimit(response.data.limit);
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
           setError(err.message || "An error occurred");
@@ -134,7 +169,7 @@ export const useProducts = (): UseProductsReturnType => {
       setError(null);
       try {
         await productsApi.post("/add", newProduct);
-        await fetchAllProducts(); // Refresh the list after creation
+        await fetchAllProducts();
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
           setError(err.message || "An error occurred");
@@ -154,7 +189,7 @@ export const useProducts = (): UseProductsReturnType => {
       setError(null);
       try {
         await productsApi.put(`/${id}`, updatedProduct);
-        await fetchProductById(id); // Refresh the product after update
+        await fetchProductById(id);
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
           setError(err.message || "An error occurred");
@@ -174,7 +209,7 @@ export const useProducts = (): UseProductsReturnType => {
       setError(null);
       try {
         await productsApi.delete(`/${id}`);
-        await fetchAllProducts(); // Refresh the list after deletion
+        await fetchAllProducts();
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
           setError(err.message || "An error occurred");
@@ -189,7 +224,7 @@ export const useProducts = (): UseProductsReturnType => {
   );
 
   useEffect(() => {
-    fetchAllProducts(); // Automatically fetch products on mount
+    fetchAllProducts();
   }, [fetchAllProducts]);
 
   return {
