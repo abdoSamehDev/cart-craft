@@ -4,7 +4,7 @@ import Logo from "../assets/logo.png";
 import { AdminData, ProductData } from "../types";
 import { isAuthenticated } from "../store/localStore";
 import { MainButton } from "../components/Buttons";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import AddModal from "../components/AddModal";
 import { InfoAlert } from "../components/Alerts";
 import { useProducts } from "../hooks/useProducts";
@@ -12,8 +12,9 @@ import { useProducts } from "../hooks/useProducts";
 type Props = { adminData?: AdminData };
 
 const Header: React.FC<Props> = ({ adminData }: Props): JSX.Element => {
-  // const isAdmin: boolean = isAuthenticated();
-  const isAdmin: boolean = true;
+  const navigate = useNavigate();
+  const isAdmin: boolean = isAuthenticated();
+  // const isAdmin: boolean = true;
   const location = useLocation();
   const { createProduct } = useProducts();
   const [addModal, setAddModal] = useState<boolean>(false);
@@ -46,67 +47,65 @@ const Header: React.FC<Props> = ({ adminData }: Props): JSX.Element => {
           <Navbar.Brand href="/">
             <img src={Logo} className="mr-3 h-6 sm:h-9" alt="Logo" />
           </Navbar.Brand>
-
-          {isAdmin ? (
-            <div className="flex gap-5">
-              {/* <Navbar.Toggle /> */}
-              {location.pathname === "/admin-dashboard" && (
-                <MainButton
-                  label="Add a Product"
-                  onClick={() => {
-                    handleAddClick();
-                  }}
-                />
-              )}
-              <Dropdown
-                arrowIcon={false}
-                inline
-                label={
-                  <Avatar
-                    alt="User settings"
-                    img={`${adminData ? adminData.image : "https://dummyjson.com/icon/emilys/128"}`}
-                    rounded
+          <div className="flex gap-5">
+            {isAdmin ? (
+              <div className="flex gap-5">
+                {location.pathname === "/admin-dashboard" && (
+                  <MainButton
+                    label="Add a Product"
+                    onClick={() => {
+                      handleAddClick();
+                    }}
                   />
-                }
-              >
-                <Dropdown.Header>
-                  <span className="block text-sm">
-                    {adminData ? adminData.firstName : ""}{" "}
-                    {adminData ? adminData.lastName : ""}
-                  </span>
-                  <span className="block truncate text-sm font-medium">
-                    {adminData ? adminData.email : ""}
-                  </span>
-                </Dropdown.Header>
-                <Dropdown.Item>
-                  <Navbar.Link href="/admin-dashboard">Dashboard</Navbar.Link>
-                </Dropdown.Item>
-                <Dropdown.Divider />
-                <Dropdown.Item
-                // onClick={
-                //   // TODO: SIGNOUT FUNCTION
-                // }
+                )}
+                <Dropdown
+                  arrowIcon={false}
+                  inline
+                  label={
+                    <Avatar
+                      alt="User settings"
+                      img={`${adminData ? adminData.image : "https://dummyjson.com/icon/emilys/128"}`}
+                      rounded
+                    />
+                  }
                 >
-                  Sign out
-                </Dropdown.Item>
-              </Dropdown>
-            </div>
-          ) : (
-            <>
+                  <Dropdown.Header>
+                    <span className="block text-sm">
+                      {adminData ? adminData.firstName : ""}{" "}
+                      {adminData ? adminData.lastName : ""}
+                    </span>
+                    <span className="block truncate text-sm font-medium">
+                      {adminData ? adminData.email : ""}
+                    </span>
+                  </Dropdown.Header>
+                  <Dropdown.Item>
+                    <Navbar.Link href="/admin-dashboard">Dashboard</Navbar.Link>
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+                  <Dropdown.Item
+                  // onClick={
+                  //   // TODO: SIGNOUT FUNCTION
+                  // }
+                  >
+                    Sign out
+                  </Dropdown.Item>
+                </Dropdown>
+              </div>
+            ) : (
               <MainButton
+                className="w-auto"
                 label="Sign In"
-                // onClick={
-                //    //TODO: SIGN IN FUNCTION
-                //  }
+                onClick={() => navigate("/admin-login")}
               />
-              {/* <SecondaryButton
-              label="Sign In"
-              //  onClick={
-              //  //TODO: SIGN IN FUNCTION
-              //  }
-            /> */}
-            </>
-          )}
+            )}
+            <MainButton
+              label="Cart"
+              className="w-auto"
+              onClick={() => {
+                navigate("/cart");
+              }}
+            />
+          </div>
         </div>
         {/* Edit Modal */}
         {addModal && (

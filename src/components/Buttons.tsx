@@ -6,6 +6,7 @@ type Props = {
   icon?: JSX.Element;
   label?: string;
   title?: string;
+  className?: string;
   onClick?: () => void;
 };
 
@@ -14,13 +15,14 @@ export const MainButton = ({
   loading = false,
   icon,
   label = "",
+  className = "",
   onClick,
 }: Props) => {
   return (
     <Button
       size={size}
       isProcessing={loading}
-      className="w-full items-center bg-primary text-secondary transition-all duration-75 hover:text-white"
+      className={`w-full items-center bg-primary text-secondary transition-all duration-75 hover:text-white ${className}`}
       color=""
       onClick={onClick}
     >
