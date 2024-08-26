@@ -176,6 +176,7 @@ const CartPage: React.FC = (): JSX.Element => {
                           setCheckoutModal(true);
                         }}
                       />
+
                     </div>
                   </div>
                 </div>
@@ -206,6 +207,7 @@ const CartPage: React.FC = (): JSX.Element => {
         )}
       </div>
     </>
+
   );
 };
 

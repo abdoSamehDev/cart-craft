@@ -6,6 +6,7 @@ const CheckoutPage: React.FC = () => {
     "success" | "failure" | null
   >(null);
 
+
   // Specify the type of 'status' parameter
   const handlePayment = (status: "success" | "failure") => {
     setPaymentStatus(status);

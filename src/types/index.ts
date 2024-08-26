@@ -62,7 +62,6 @@ export type ProductsApiResponse = {
   skip: number;
   limit: number;
 };
-
 export type ProductFromData = {
   title: string;
   description: string;
