@@ -16,3 +16,7 @@ body,
   @apply text-text;
   @apply bg-background;
 }
+
+.bg-white.modal-header {
+  @apply bg-secondary;
+}

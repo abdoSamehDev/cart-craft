@@ -56,6 +56,12 @@ export type ProductData = {
   images: string[];
 };
 
+export type ProductsApiResponse = {
+  products: ProductData[];
+  total: number;
+  skip: number;
+  limit: number;
+};
 export type ProductFromData = {
   title: string;
   description: string;
@@ -70,12 +76,27 @@ export type UseProductsReturnType = {
   product: ProductData | null;
   loading: boolean;
   error: string | null;
-  totalPosts: number;
+  total: number | null;
+  skip: number;
+  limit: number;
   fetchAllProducts: (limit?: number, skip?: number) => Promise<void>;
   fetchProductById: (id: number) => Promise<void>;
-  searchProducts: (query: string) => Promise<void>;
-  fetchProductsByCategory: (category: string) => Promise<void>;
-  sortProducts: (sortBy: string, order: "asc" | "desc") => Promise<void>;
+  searchProducts: (
+    query: string,
+    limit?: number,
+    skip?: number,
+  ) => Promise<void>;
+  fetchProductsByCategory: (
+    category: string,
+    limit?: number,
+    skip?: number,
+  ) => Promise<void>;
+  sortProducts: (
+    sortBy: string,
+    order: "asc" | "desc",
+    limit?: number,
+    skip?: number,
+  ) => Promise<void>;
   fetchCategories: () => Promise<string[]>;
   createProduct: (newProduct: Partial<ProductData>) => Promise<void>;
   updateProduct: (
@@ -83,4 +104,42 @@ export type UseProductsReturnType = {
     updatedProduct: Partial<ProductData>,
   ) => Promise<void>;
   deleteProduct: (id: number) => Promise<void>;
+};
+
+export type ProductInCart = {
+  id: number;
+  title: string;
+  price: number;
+  quantity: number;
+  total: number;
+  discountPercentage: number;
+  discountedTotal: number;
+  thumbnail: string;
+};
+
+export type Cart = {
+  id?: number;
+  products: ProductInCart[];
+  total: number;
+  discountedTotal: number;
+  userId?: number;
+  totalProducts: number;
+  totalQuantity: number;
+};
+
+export type UseCartsReturnType = {
+  cart: Cart | null;
+  loading: boolean;
+  error: string | null;
+  addToCart: (product: ProductInCart) => void;
+  removeFromCart: (productId: number) => void;
+  updateCart: (
+    cartId: number,
+    products: ProductInCart[],
+    merge?: boolean,
+  ) => Promise<void>;
+  updateCartProductQuyantity: (productId: number, newQuantity: number) => void;
+  deleteCart: (cartId: number) => Promise<void>;
+  checkAndRemoveEmptyCart: () => void;
+  getCart: () => Cart | null;
 };

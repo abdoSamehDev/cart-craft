@@ -1,173 +1,213 @@
-import  { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { Avatar, List } from "flowbite-react";
+import { IconButton, MainButton } from "../../../components/Buttons";
+import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
+import DeleteModal from "../../../components/DeleteModal";
+import { ProductInCart } from "../../../types";
+import { InfoAlert } from "../../../components/Alerts";
+import { useCart } from "../../../hooks/useCart";
+import LoadingSpinner from "../../../components/Spinner";
+import ErrorPage from "../../ErrorPage";
+import CheckoutModal from "../../../components/CheckoutModal";
 
-const CartPage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const CartPage: React.FC = (): JSX.Element => {
+  const { cart, loading, error, removeFromCart, updateCartProductQuyantity } =
+    useCart();
 
-  const checkoutHandler = (isOpen: boolean | ((prevState: boolean) => boolean)) => {
-    setIsModalOpen(isOpen);
+  const naviget = useNavigate();
+  const [deleteModal, setDelModal] = useState<boolean>(false);
+  const [checkoutModal, setCheckoutModal] = useState<boolean>(false);
+  const [selectedProduct, setSelectedProduct] = useState<ProductInCart | null>(
+    null,
+  );
+  const [showEditMessage, setShowEditMessage] = useState(false);
+  const [showDeleteMessage, setShowDeleteMessage] = useState(false);
+  const [showCheckoutMessage, setShowCheckoutMessage] = useState(false);
+
+  useEffect(() => {
+    if (showEditMessage) {
+      const timer = setTimeout(() => {
+        setShowEditMessage(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+    if (showDeleteMessage) {
+      const timer = setTimeout(() => {
+        setShowDeleteMessage(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+    if (showCheckoutMessage) {
+      const timer = setTimeout(() => {
+        setShowCheckoutMessage(false);
+        naviget("/");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [naviget, showCheckoutMessage, showDeleteMessage, showEditMessage]);
+
+  const handleDelClick = (product: ProductInCart) => {
+    setSelectedProduct(product);
+    setDelModal(true);
   };
 
+  const handleDelete = async () => {
+    if (selectedProduct) {
+      removeFromCart(selectedProduct.id);
+      setShowDeleteMessage(true);
+    }
+    setDelModal(false);
+  };
+
+  const handleCheckout = async () => {
+    setShowCheckoutMessage(true);
+    setCheckoutModal(false);
+  };
+
+  const handleQuantityChange = (product: ProductInCart, increment: boolean) => {
+    const newQuantity = increment ? product.quantity + 1 : product.quantity - 1;
+    if (newQuantity > 0) {
+      updateCartProductQuyantity(product.id, newQuantity);
+      setShowEditMessage(true);
+    } else {
+      handleDelClick(product);
+    }
+  };
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorPage />;
   return (
-      <>
-        <div className="flex items-center justify-center py-8">
-          <button
-              onClick={() => checkoutHandler(true)}
-              className="py-2 px-10 rounded bg-indigo-600 hover:bg-indigo-700 text-white"
-          >
-            Open Modal
-          </button>
-        </div>
-        {isModalOpen && (
-            <div
-                className="w-full h-full bg-black dark:bg-gray-900 bg-opacity-90 top-0 overflow-y-auto overflow-x-hidden fixed sticky-0"
-            >
-              <div
-                  className="w-full absolute z-10 right-0 h-full overflow-x-hidden transform translate-x-0 transition ease-in-out duration-700"
-              >
-                <div
-                    className="flex items-end lg:flex-row flex-col justify-end"
-                    id="cart"
-                >
-                  <div
-                      className="lg:w-1/2 md:w-8/12 w-full lg:px-8 lg:py-14 md:px-6 px-4 md:py-8 py-4 bg-white dark:bg-gray-800 overflow-y-hidden overflow-x-hidden lg:h-screen h-auto"
-                  >
+    <>
+      {showEditMessage && InfoAlert("Product edited successfully.")}
+      {showDeleteMessage && InfoAlert("Product deleted successfully.")}
+      {showCheckoutMessage && InfoAlert("Purchase completed successfully.")}
+
+      <div className="mx-auto my-10 flex min-h-screen w-5/6 justify-center ">
+        <div className="mx-auto flex w-full flex-col gap-10">
+          <h1 className="text-5xl font-bold">Cart</h1>
+          <List unstyled className="size-full divide-y divide-accent ">
+            {cart?.totalProducts === 0 ? (
+              <div className="flex size-full items-center justify-center">
+                <h2 className=" text-center text-xl">Your Cart Is Empty</h2>
+              </div>
+            ) : (
+              cart?.products.map((product, index) => (
+                <List.Item key={index} className="w-full p-3 px-5">
+                  <div className="flex w-full flex-col items-center gap-4 text-center md:flex-row md:text-left">
+                    <Avatar
+                      img={product.thumbnail}
+                      alt="Product Image"
+                      size="lg"
+                      className="cursor-pointer"
+                      onClick={() => {
+                        naviget(`/product/${product.id}`);
+                      }}
+                    />
                     <div
-                        className="flex items-center text-gray-500 hover:text-gray-600 dark:text-white cursor-pointer"
-                        onClick={() => checkoutHandler(false)}
+                      className="min-w-0 flex-1 cursor-pointer"
+                      onClick={() => {
+                        naviget(`/product/${product.id}`);
+                      }}
                     >
-                      <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="icon icon-tabler icon-tabler-chevron-left"
-                          width={16}
-                          height={16}
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.5"
-                          stroke="currentColor"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <polyline points="15 6 9 12 15 18" />
-                      </svg>
-                      <p className="text-sm pl-2 leading-none dark:hover:text-gray-200">
-                        Back
+                      <p className=" truncate text-sm font-medium text-text">
+                        {product.title}
+                      </p>
+                      <p className="truncate text-sm text-gray-400 ">
+                        Amount: {product.quantity}
                       </p>
                     </div>
-                    <p className="lg:text-4xl text-3xl font-black leading-10 text-gray-800 dark:text-white pt-3">
-                      Bag
-                    </p>
-
-                    {/* Product Items Start */}
-                    <div className="md:flex items-stretch py-8 md:py-10 lg:py-8 border-t border-gray-50">
-                      {/* Product 1 */}
-                      <div className="md:w-4/12 2xl:w-1/4 w-full">
-                        <img
-                            src="https://i.ibb.co/SX762kX/Rectangle-36-1.png"
-                            alt="Black Leather Bag"
-                            className="h-full object-center object-cover md:block hidden"
-                        />
-                        <img
-                            src="https://i.ibb.co/g9xsdCM/Rectangle-37.pngg"
-                            alt="Black Leather Bag"
-                            className="md:hidden w-full h-full object-center object-cover"
-                        />
+                    <div className="flex ">
+                      <div className="inline-flex items-center text-base font-semibold text-accent ">
+                        ${product.total.toFixed(2)}
                       </div>
-                      <div className="md:pl-3 md:w-8/12 2xl:w-3/4 flex flex-col justify-center">
-                        <p className="text-xs leading-3 text-gray-800 dark:text-white md:pt-0 pt-4">
-                          RF293
-                        </p>
-                        <div className="flex items-center justify-between w-full pt-1">
-                          <p className="text-base font-black leading-none text-gray-800 dark:text-white">
-                            North wolf bag
-                          </p>
-                          <select
-                              aria-label="Select quantity"
-                              className="py-2 px-1 border border-gray-200 mr-6 focus:outline-none dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white"
-                          >
-                            <option>01</option>
-                            <option>02</option>
-                            <option>03</option>
-                          </select>
+                      <div className="ml-10 flex gap-3">
+                        <div className="flex items-center gap-2">
+                          <IconButton
+                            title="Decrease"
+                            size="sm"
+                            icon={
+                              <MinusIcon className="size-4 text-gray-500" />
+                            }
+                            onClick={() => handleQuantityChange(product, false)}
+                          />
+                          <span className="text-lg">{product.quantity}</span>
+                          <IconButton
+                            title="Increase"
+                            size="sm"
+                            icon={<PlusIcon className="size-4 text-gray-500" />}
+                            onClick={() => handleQuantityChange(product, true)}
+                          />
                         </div>
-                        <p className="text-xs leading-3 text-gray-600 dark:text-white pt-2">
-                          Height: 10 inches
-                        </p>
-                        <p className="text-xs leading-3 text-gray-600 dark:text-white py-4">
-                          Color: Black
-                        </p>
-                        <p className="w-96 text-xs leading-3 text-gray-600 dark:text-white">
-                          Composition: 100% calf leather
-                        </p>
-                        <div className="flex items-center justify-between pt-5">
-                          <div className="flex items-center">
-                            <p className="text-xs leading-3 underline text-gray-800 dark:text-white cursor-pointer">
-                              Add to favorites
-                            </p>
-                            <p className="text-xs leading-3 underline text-red-500 pl-5 cursor-pointer">
-                              Remove
-                            </p>
-                          </div>
-                          <p className="text-base font-black leading-none text-gray-800 dark:text-white">
-                            ,000
-                          </p>
-                        </div>
+                        <IconButton
+                          title="Delete"
+                          size="sm"
+                          icon={<TrashIcon className="size-4 text-red-500" />}
+                          onClick={() => {
+                            handleDelClick(product);
+                          }}
+                        />
                       </div>
                     </div>
-                    {/* Product Items End */}
+                  </div>
+                </List.Item>
+              ))
+            )}
+            {/* <FooterDivider /> */}
+            <List.Item className="w-full p-3 px-5">
+              <div className="flex w-full flex-col items-center gap-4 text-center md:flex-row md:text-left">
+                <div className="min-w-0 flex-1 cursor-pointer">
+                  <h2 className="truncate text-lg font-medium text-text">
+                    Total
+                  </h2>
+                  <p className="truncate text-sm text-gray-400 ">
+                    Amount: {cart?.totalQuantity}
+                  </p>
+                </div>
+                <div className="flex ">
+                  <div className="inline-flex items-center text-base font-semibold text-accent ">
+                    ${cart?.total.toFixed(2)}
+                  </div>
+                  <div className="ml-10 flex gap-3">
+                    <div className="flex items-center gap-2">
+                      <MainButton
+                        label="Checkout"
+                        onClick={() => {
+                          setCheckoutModal(true);
+                        }}
+                      />
 
-                    {/* Summary Section */}
-                    <div className="lg:w-96 md:w-8/12 w-full bg-gray-100 dark:bg-gray-900 h-full">
-                      <div className="flex flex-col lg:h-screen h-auto lg:px-8 md:px-7 px-4 lg:py-20 md:py-10 py-6 justify-between overflow-y-auto">
-                        <div>
-                          <p className="lg:text-4xl text-3xl font-black leading-9 text-gray-800 dark:text-white">
-                            Summary
-                          </p>
-                          <div className="flex items-center justify-between pt-16">
-                            <p className="text-base leading-none text-gray-800 dark:text-white">
-                              Subtotal
-                            </p>
-                            <p className="text-base leading-none text-gray-800 dark:text-white">
-                              ,000
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-between pt-5">
-                            <p className="text-base leading-none text-gray-800 dark:text-white">
-                              Shipping
-                            </p>
-                            <p className="text-base leading-none text-gray-800 dark:text-white" />
-                          </div>
-                          <div className="flex items-center justify-between pt-5">
-                            <p className="text-base leading-none text-gray-800 dark:text-white">
-                              Tax
-                            </p>
-                            <p className="text-base leading-none text-gray-800 dark:text-white" />
-                          </div>
-                        </div>
-                        <div>
-                          <div className="flex items-center pb-6 justify-between lg:pt-5 pt-20">
-                            <p className="text-2xl leading-normal text-gray-800 dark:text-white">
-                              Total
-                            </p>
-                            <p className="text-2xl font-bold leading-normal text-right text-gray-800 dark:text-white">
-                              ,240
-                            </p>
-                          </div>
-                          <button
-                              onClick={() => checkoutHandler(false)}
-                              className="text-base leading-none w-full py-5 bg-gray-800 border-gray-800 border focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 text-white dark:hover:bg-gray-700"
-                          >
-                            Checkout
-                          </button>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </List.Item>
+          </List>
+        </div>
+
+        {/* Delete Modal */}
+        {deleteModal && selectedProduct && (
+          <DeleteModal
+            openModal={deleteModal}
+            setOpenModal={setDelModal}
+            productId={selectedProduct.id}
+            delFunction={handleDelete}
+          />
         )}
-      </>
+
+        {/* Checkout Modal */}
+        {checkoutModal && (
+          <CheckoutModal
+            openModal={checkoutModal}
+            setOpenModal={setCheckoutModal}
+            totalProducts={cart ? cart.totalProducts : 0}
+            totalPrice={cart ? cart.total : 0}
+            checkoutFunction={handleCheckout}
+          />
+        )}
+      </div>
+    </>
+
   );
 };
 

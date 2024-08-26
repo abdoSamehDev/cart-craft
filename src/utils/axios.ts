@@ -9,5 +9,5 @@ export const productsApi = axios.create({
 });
 
 export const cartsApi = axios.create({
-  baseURL: "https://dummyjson.com/products",
+  baseURL: "https://dummyjson.com/carts",
 });
