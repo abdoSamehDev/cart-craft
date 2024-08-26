@@ -15,8 +15,6 @@ import CartPage from "./pages/user/cartPage";
 import { isAuthenticated } from "./store/localStore";
 import PrivateRouter from "./components/PrivateRouter";
 import NotFoundPathPage from "./pages/NotFoundPathPage";
-import fetchProductById from "./pages/user/productDetailsPage/mocks";
-
 
 function App() {
   const isAdmin: boolean = isAuthenticated();
@@ -25,10 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
-          <Route
-            path="/product/:id"
-            element={<ProductDetailsPage fetchProductById={fetchProductById} />}
-          />
+          <Route path="/product/:id" element={<ProductDetailsPage />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />

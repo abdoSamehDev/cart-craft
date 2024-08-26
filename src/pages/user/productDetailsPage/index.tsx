@@ -1,14 +1,35 @@
-import React, { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { MainButton } from '../../../components/Buttons';
-import StarRating from '../../../components/StarRating';
-import { useProducts } from '../../../hooks/useProducts';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { MainButton } from "../../../components/Buttons";
+import StarRating from "../../../components/StarRating";
+import { useProducts } from "../../../hooks/useProducts";
+import LoadingSpinner from "../../../components/Spinner";
+import ErrorPage from "../../ErrorPage";
+import { useCart } from "../../../hooks/useCart";
+import { InfoAlert } from "../../../components/Alerts";
+import { ProductInCart } from "../../../types";
 
 const ProductPageDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
+
   const { product, fetchProductById, loading, error } = useProducts();
+  const { addToCart } = useCart();
+  const [showMessage, setShowMessage] = useState(false);
+
+  const handleAddToCart = (newProduct: ProductInCart) => {
+    addToCart(newProduct);
+    setShowMessage(true);
+  };
+
+  useEffect(() => {
+    if (showMessage) {
+      const timer = setTimeout(() => {
+        setShowMessage(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showMessage]);
 
   useEffect(() => {
     if (id) {
@@ -17,13 +38,11 @@ const ProductPageDetail: React.FC = () => {
   }, [id, fetchProductById]);
 
   if (loading) {
-    return    <div className="col-span-full flex justify-center items-center">
-    <div className="w-20 h-20 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
-  </div>
+    return <LoadingSpinner />;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <ErrorPage />;
   }
 
   if (!product) {
@@ -31,101 +50,135 @@ const ProductPageDetail: React.FC = () => {
   }
 
   const discountedPrice = (
-    product.price - (product.price * product.discountPercentage) / 100
+    product.price -
+    (product.price * product.discountPercentage) / 100
   ).toFixed(2);
 
   return (
-    <div className="container mx-auto p-4 bg-[#1A202C] rounded-lg shadow-md">
-      <div className="mb-4 sticky top-6 z-10">
-        <button
-          onClick={() => navigate('/')}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600"
-        >
-          Back to Home
-        </button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Product Image */}
-        <div className="flex justify-center items-center">
-          <img
-            src={product.thumbnail || 'https://via.placeholder.com/300'}
-            alt={product.title}
-            className="w-full max-w-sm rounded-lg shadow-lg"
-          />
+    <div>
+      {showMessage && (
+        <div className="fixed top-0 z-40 w-full">
+          {InfoAlert("Product added successfully.")}
         </div>
-
-        <div>
-          <h1 className="text-4xl font-extrabold text-white mb-4">{product.title}</h1>
-          <p className="text-lg text-gray-300 mb-4">{product.description}</p>
-
-          <StarRating rating={product.rating} />
-
-          <div className="text-3xl font-semibold text-primary mb-4">
-            ${discountedPrice}{' '}
-            <span className="line-through text-gray-500 text-lg ml-2">
-              ${product.price}
-            </span>
+      )}
+      <div className="container mx-auto rounded-lg bg-[#1A202C] p-4 shadow-md">
+        <div className="sticky top-6 z-10 mb-4">
+          <button
+            onClick={() => navigate("/")}
+            className="rounded-lg bg-blue-500 px-4 py-2 text-white shadow-md hover:bg-blue-600"
+          >
+            Back to Home
+          </button>
+        </div>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          {/* Product Image */}
+          <div className="flex items-center justify-center">
+            <img
+              src={product.thumbnail || "https://via.placeholder.com/300"}
+              alt={product.title}
+              className="w-full max-w-sm rounded-lg shadow-lg"
+            />
           </div>
 
-          <p className={`text-white-400 font-semibold mb-4`}>
-            {product.availabilityStatus} ({product.stock} in stock)
-          </p>
+          <div>
+            <h1 className="mb-4 text-4xl font-extrabold text-white">
+              {product.title}
+            </h1>
+            <p className="mb-4 text-lg text-gray-300">{product.description}</p>
 
-          <div className="text-lg mb-2">
-            <p className="mb-2">
-              <span className="font-semibold text-white">Brand:</span> 
-              <span className="text-gray-300"> {product.brand}</span>
-            </p>
-            <p className="mb-4">
-              <span className="font-semibold text-white">SKU:</span> 
-              <span className="text-gray-300"> {product.sku}</span>
-            </p>
-          </div>
+            <StarRating rating={product.rating} />
 
-          <div className="text-lg mb-2">
-            <p className="mb-2">
-              <span className="font-semibold text-white">Dimensions:</span> 
-              <span className="text-gray-300"> {product.dimensions.width} x {product.dimensions.height} x {product.dimensions.depth} cm</span>
-            </p>
-            <p className="mb-4">
-              <span className="font-semibold text-white">Weight:</span> 
-              <span className="text-gray-300"> {product.weight} g</span>
-            </p>
-          </div>
-
-          <p className="text-lg mb-2">
-            <span className="font-semibold text-white">Warranty:</span> 
-            <span className="text-gray-300"> {product.warrantyInformation}</span>
-          </p>
-
-          <p className="text-lg mb-4">
-            <span className="font-semibold text-white">Shipping:</span> 
-            <span className="text-gray-300"> {product.shippingInformation}</span>
-          </p>
-
-          <div className="mb-4">
-            {product.tags.map((tag, index) => (
-              <span
-                key={index}
-                className="inline-block bg-secondary rounded-full px-3 py-1 text-sm font-semibold text-gray-300 mr-2 mb-2"
-              >
-                #{tag}
+            <div className="mb-4 text-3xl font-semibold text-primary">
+              ${discountedPrice}{" "}
+              <span className="ml-2 text-lg text-gray-500 line-through">
+                ${product.price}
               </span>
-            ))}
-          </div>
+            </div>
 
-          <div className="flex space-x-4">
-            <MainButton
-              label="Compare"
-              onClick={() => navigate('/compare', { state: { selectedProduct: product } })}
-              className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600"
-            />
+            <p className={`text-white-400 mb-4 font-semibold`}>
+              {product.availabilityStatus} ({product.stock} in stock)
+            </p>
 
-            <MainButton
-              label="Add to Cart"
-              onClick={() => navigate('/cart')}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600"
-            />
+            <div className="mb-2 text-lg">
+              <p className="mb-2">
+                <span className="font-semibold text-white">Brand:</span>
+                <span className="text-gray-300"> {product.brand}</span>
+              </p>
+              <p className="mb-4">
+                <span className="font-semibold text-white">SKU:</span>
+                <span className="text-gray-300"> {product.sku}</span>
+              </p>
+            </div>
+
+            <div className="mb-2 text-lg">
+              <p className="mb-2">
+                <span className="font-semibold text-white">Dimensions:</span>
+                <span className="text-gray-300">
+                  {" "}
+                  {product.dimensions.width} x {product.dimensions.height} x{" "}
+                  {product.dimensions.depth} cm
+                </span>
+              </p>
+              <p className="mb-4">
+                <span className="font-semibold text-white">Weight:</span>
+                <span className="text-gray-300"> {product.weight} g</span>
+              </p>
+            </div>
+
+            <p className="mb-2 text-lg">
+              <span className="font-semibold text-white">Warranty:</span>
+              <span className="text-gray-300">
+                {" "}
+                {product.warrantyInformation}
+              </span>
+            </p>
+
+            <p className="mb-4 text-lg">
+              <span className="font-semibold text-white">Shipping:</span>
+              <span className="text-gray-300">
+                {" "}
+                {product.shippingInformation}
+              </span>
+            </p>
+
+            <div className="mb-4">
+              {product.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="mb-2 mr-2 inline-block rounded-full bg-secondary px-3 py-1 text-sm font-semibold text-gray-300"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+
+            <div className="flex space-x-4">
+              <MainButton
+                label="Compare"
+                onClick={() =>
+                  navigate("/compare", { state: { selectedProduct: product } })
+                }
+                className="rounded-lg bg-green-500 px-4 py-2 text-white shadow-md hover:bg-green-600"
+              />
+
+              <MainButton
+                label="Add to Cart"
+                onClick={() =>
+                  handleAddToCart({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    discountedTotal:
+                      product.discountPercentage * product?.price,
+                    discountPercentage: product.discountPercentage,
+                    quantity: 1,
+                    thumbnail: product.thumbnail,
+                    total: product.price,
+                  })
+                }
+                className="rounded-lg bg-blue-500 px-4 py-2 text-white shadow-md hover:bg-blue-600"
+              />
+            </div>
           </div>
         </div>
       </div>

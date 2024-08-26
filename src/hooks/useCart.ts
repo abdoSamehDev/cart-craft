@@ -46,15 +46,43 @@ export const useCart = (): UseCartsReturnType => {
       let updatedCart: Cart;
 
       if (cart) {
-        updatedCart = {
-          ...cart,
-          products: [...cart.products, product],
-          total: cart.total + product.total,
-          discountedTotal: cart.discountedTotal + product.discountedTotal,
-          totalProducts: cart.totalProducts + 1,
-          totalQuantity: cart.totalQuantity + product.quantity,
-        };
+        const existingProductIndex = cart.products.findIndex(
+          (p) => p.id === product.id,
+        );
+
+        if (existingProductIndex !== -1) {
+          // Update the quantity and totals for the existing product
+          const updatedProducts = cart.products.map((p, index) =>
+            index === existingProductIndex
+              ? {
+                  ...p,
+                  quantity: p.quantity + product.quantity,
+                  total: p.total + product.total,
+                  discountedTotal: p.discountedTotal + product.discountedTotal,
+                }
+              : p,
+          );
+
+          updatedCart = {
+            ...cart,
+            products: updatedProducts,
+            total: cart.total + product.total,
+            discountedTotal: cart.discountedTotal + product.discountedTotal,
+            totalQuantity: cart.totalQuantity + product.quantity,
+          };
+        } else {
+          // Add the new product to the cart
+          updatedCart = {
+            ...cart,
+            products: [...cart.products, product],
+            total: cart.total + product.total,
+            discountedTotal: cart.discountedTotal + product.discountedTotal,
+            totalProducts: cart.totalProducts + 1,
+            totalQuantity: cart.totalQuantity + product.quantity,
+          };
+        }
       } else {
+        // Cart is empty, so add the product as the first item
         updatedCart = {
           products: [product],
           total: product.total,
