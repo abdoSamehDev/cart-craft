@@ -12,12 +12,12 @@ CartCraft is a feature-rich e-commerce website developed as part of the "Digital
 
 ## 🛠 Technologies Used
 
-- **React with TypeScript:** Leveraging TypeScript for better handling of APIs and data types.
+- **React with TypeScript:** Leveraging TypeScript for enhanced handling of APIs and data types.
 - **Tailwind CSS:** For fast, responsive design.
 - **Flowbite React:** UI components to speed up development.
 - **React Hook Form:** Efficient form handling.
 - **Local Storage:** For persisting token and cart data.
-- **Dummy JSON APIs:** Mock backend API for product data.
+- **AI-Powered Design:** Utilized the Flux text-to-image AI model to create the website logo and icon, enhancing the brand's visual identity with innovative design.
 - **Deployment:** Deployed on Cloudflare Pages for fast, global performance.
 
 ## 🚀 Getting Started
@@ -52,16 +52,15 @@ This project uses the [DummyJSON](https://dummyjson.com/docs) API for admin auth
 
 ## 👥 Contributors
 
-Special thanks to our team:
+Special thanks to my amazing team members
 
-- **[Abdelrahman Sameh](https://github.com/abdoSamehDev)**
 - **[Basel Mosalam](https://github.com/Bailts110)**
 - **[Abdelrahman Zain](https://github.com/zainmo11)**
 
 ## 🎉 Acknowledgments
 
 We would like to express our sincere gratitude to the Digital Egypt Pioneers Initiative (DEPI) for providing this invaluable opportunity to learn and grow as developers.
-A special thank you to our instructor, Eng. Ahmed, for his valuable guidance and support throughout our learning journey in the initiative.
+A special thank you to our instructor, **[Eng. Ahmed](https://github.com/Ahm3dMoham3d)**, for his valuable guidance and support throughout our learning journey in the initiative.
 
 ## 🌐 Check It Out
 
